@@ -1,0 +1,15 @@
+{% extends "profiles/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    {% if recommendation %}
+        {% for item in recommendation %}
+            <p>{{ item.bookId }}</p>
+            <p>{{ item.product_name }}</p>
+            <p>{{ item.genres }}</p>
+            <p>{{ item.price }}</p>
+            <p>{{ item.quantity }}</p>
+        {% endfor %}
+    {% else %}
+        <h4>You have no recommendation at present</h4>
+    {% endif %}
+{% endblock content %}

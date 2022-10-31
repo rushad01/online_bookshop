@@ -14,4 +14,5 @@ urlpatterns = [
     path('update_item/', views.updateItem, name='update_item'),
     path('product/<str:book_name>',
          views.productDetail, name='product-detail'),
+    path('recommendation/', views.returnRecommendation, name="recommendation"),
 ]

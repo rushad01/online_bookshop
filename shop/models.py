@@ -68,4 +68,4 @@ class Product(models.Model):
         default='book-default.jpg', upload_to='product')
 
     def __str__(self):
-        return str(self.product_name)
+        return f'{self.product_name}'

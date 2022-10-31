@@ -1,85 +1,92 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Online Bookshop</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet"
+              type="text/css"
+              href="{% static 'css/bootstrap.css' %}">
+        <script type="text/javascript">
+          var user = "{{request.user}}";
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online Bookshop</title>
-  <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
-
-  <script type="text/javascript">
-		var user = "{{request.user}}";
-
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
+            function getCookie(name) {
+              let cookieValue = null;
+              if (document.cookie && document.cookie !== '') {
+                  const cookies = document.cookie.split(';');
+                  for (let i = 0; i < cookies.length; i++) {
+                      const cookie = cookies[i].trim();
+                      // Does this cookie string begin with the name we want?
+                      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                          break;
+                      }
+                  }
               }
+              return cookieValue;
           }
-      }
-      return cookieValue;
-  }
-  const csrftoken = getCookie('csrftoken');
-  </script>
-  
-</head>
-
-<body>
-  <nav class="navbar navbar-expand-lg bg-steel navbar-light ml-auto">
-    <a class="navbar-brand" href="{% url 'home' %}">Home</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav">
-        {% if user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link user-name" data-user="{{request.user}}" style="display: inline-block;" href="{% url 'profiles:profile' %}"> <img
-              class="rounded-circle" style="
-          width:25px; margin-right: 2px;" src="{{ user.profile.profile_pic.url }}">{{user.username}}
-          </a>
-          <li>
-          <a class="nav-item nav-link" href="{% url 'profiles:logout' %}">Logout</a>
-          </li>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Recommendation</a>
-        </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'profiles:login' %}">Sign In</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'profiles:register' %}">Sign Up</a>
-        </li>
-        {% endif %}
-        <li>
-        <a href="{% url 'profiles:cart' %}">
-          <img style="	width:25px; margin-left: 10px; text-decoration: none; padding-top:8px" src="{% static 'images/cart.png' %}">
-        </a>
-      </li>
-      </ul>
-    </div>
-  </nav>
-
-  {% block content %}
-  {% endblock %}
-  <!--JavaScript Files-->
-    <script type="text/javascript" src="{% static 'js/popperJS.js' %}"> </script>
-    <script type="text/javascript" src="{% static 'js/JQuery.js' %}"> </script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"> </script>
-    <script type="text/javascript" src="{% static 'js/updateCart.js' %}"> </script>
-    </script>
-</body>
-
+          const csrftoken = getCookie('csrftoken');
+        </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg bg-steel navbar-light ml-auto">
+            <a class="navbar-brand" href="{% url 'home' %}">Home</a>
+            <button class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link user-name"
+                               data-user="{{ request.user }}"
+                               style="display: inline-block;"
+                               href="{% url 'profiles:profile' %}">
+                                <img class="rounded-circle"
+                                     style="width:25px;
+                                            margin-right: 2px;"
+                                     src="{{ user.profile.profile_pic.url }}">
+                                {{ user.username }}
+                            </a>
+                            <li>
+                                <a class="nav-item nav-link" href="{% url 'profiles:logout' %}">Logout</a>
+                            </li>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profiles:recommendation' %}">Recommendation</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profiles:login' %}">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profiles:register' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
+                    <li>
+                        <a href="{% url 'profiles:cart' %}">
+                            <img style="	width:25px; margin-left: 10px; text-decoration: none; padding-top:8px"
+                                 src="{% static 'images/cart.png' %}">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        {% block content %}{% endblock %}
+        <!--JavaScript Files-->
+        <script type="text/javascript" src="{% static 'js/popperJS.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/JQuery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/updateCart.js' %}"></script>
+        </script>
+    </body>
 </html>

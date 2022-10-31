@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt, ceil
+import json
 
 
 def index(request):
@@ -40,6 +41,11 @@ def productDetail(request, book_name):
 
 # for updating Cart
 def updateItem(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    print('Action: ', action)
+    print('ProductId:', productId)
     return JsonResponse("Item was added", safe=False)
 
 
@@ -105,19 +111,24 @@ def recommendationGenerator(request):
 
     # Rating dataframe
     for item in ratings:
-        A = [item.user.id, item.product, item.rating]
+        A = [item.user.id, item.product.id, item.rating]
         B += [A]
     rating_df = pd.DataFrame(B, columns=['userId', 'bookId', 'rating'])
     print("Rating Dataframe")
-    rating_df['userId'] = rating_df['userId'].astype(str).astype(np.int64)
-    rating_df['bookId'] = rating_df['bookId'].astype(str).astype(np.int64)
-    rating_df['rating'] = rating_df['rating'].astype(str).astype(np.int64)
+    rating_df['userId'] = rating_df['userId'].astype(
+        str).astype(np.int64)
+    rating_df['bookId'] = rating_df['bookId'].astype(
+        str).astype(np.int64)
+    rating_df['rating'] = rating_df['rating'].astype(
+        str).astype(np.float)
     print(rating_df)
     print(rating_df.dtypes)
     if request.user.is_authenticated:
         userid = request.user.id
         # select related is join statement in django.It looks for foreign key and join the table
-        userInput = Rating.objects.select_related('books').filter(user=userid)
+        userInput = Rating.objects.select_related(
+            'product').filter(user=userid)
+        print(userInput)
         if userInput.count() == 0:
             recommenderQuery = None
             userInput = None
@@ -137,8 +148,6 @@ def recommendationGenerator(request):
             # Then merging it so we can get the bookId. It's implicitly merging it by title/product_name.
 
             inputBooks = pd.merge(inputId, inputBooks)
-            # #Dropping information we won't use from the input dataframe
-            # inputBooks = inputBooks.drop('year', 1)
             # Final input dataframe
             # If a book you added in above isn't here, then it might not be in the original
             # dataframe or it might spelled differently, please check capitalisation.
@@ -167,7 +176,7 @@ def recommendationGenerator(request):
 
         # For every user group in our subset
             for name, group in userSubsetGroup:
-                # Let's start by sorting the input and current user group so the values aren't mixed up later on
+                # Start by sorting the input and current user group so the values aren't mixed up later on
                 group = group.sort_values(by='bookId')
                 inputBooks = inputBooks.sort_values(by='bookId')
                 # Get the N for the formula
@@ -177,9 +186,9 @@ def recommendationGenerator(request):
                     group['bookId'].tolist())]
                 # And then store them in a temporary buffer variable in a list format to facilitate future calculations
                 tempRatingList = temp_df['rating'].tolist()
-                # Let's also put the current user group reviews in a list format
+                # Put the current user group reviews in a list format
                 tempGroupList = group['rating'].tolist()
-                # Now let's calculate the pearson correlation between two users, so called, x and y
+                # Calculate the pearson correlation between two users, so called, x and y
                 Sxx = sum([i**2 for i in tempRatingList]) - \
                     pow(sum(tempRatingList), 2)/float(nRatings)
                 Syy = sum([i**2 for i in tempGroupList]) - \
@@ -224,7 +233,7 @@ def recommendationGenerator(request):
 
             # Creates an empty dataframe
             recommendation_df = pd.DataFrame()
-            # Now we take the weighted average
+            # Take the weighted average
             recommendation_df['weighted average recommendation score'] = tempTopUsersRating['sum_weightedRating'] / \
                 tempTopUsersRating['sum_similarityIndex']
             recommendation_df['bookId'] = tempTopUsersRating.index
@@ -240,4 +249,6 @@ def recommendationGenerator(request):
 
 def returnRecommendation(request):
     recommendation = recommendationGenerator(request)
-    return render(request, 'profiles/recommendation.html', recommendation)
+    print(recommendation)
+    data = {'recommendation': recommendation}
+    return render(request, 'profiles/recommendation.html', data)
