@@ -23,12 +23,12 @@ function updateUserOrder(productId, action) {
       "X-CSRFToken": csrftoken,
       // 'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: JSON.stringify({ productId: productId, action: action }),
+    body: JSON.stringify({ 'productId': productId, 'action': action })
   })
-    .then((response) => {
-      return response.json();
+    .then((res) => {
+      return res.json();
     })
     .then((data) => {
-      console.log("data", data);
+      location.reload();
     });
 }

@@ -46,6 +46,27 @@ def updateItem(request):
     action = data['action']
     print('Action: ', action)
     print('ProductId:', productId)
+
+    customer = request.user.profile
+    product = Product.objects.get(id=productId)
+    print(product)
+
+    # tuple unpacking
+    order, created = Order.objects.get_or_create(
+        profile=customer, completed=False)
+    orderItem, created = OrderItem.objects.get_or_create(
+        order=order, product=product)
+
+    if action == 'add':
+        orderItem.quantity = (orderItem.quantity + 1)
+    elif action == 'remove':
+        orderItem.quantity = (orderItem.quantity - 1)
+
+    orderItem.save()
+
+    if orderItem.quantity <= 0:
+        orderItem.delete()
+
     return JsonResponse("Item was added", safe=False)
 
 
@@ -115,12 +136,9 @@ def recommendationGenerator(request):
         B += [A]
     rating_df = pd.DataFrame(B, columns=['userId', 'bookId', 'rating'])
     print("Rating Dataframe")
-    rating_df['userId'] = rating_df['userId'].astype(
-        str).astype(np.int64)
-    rating_df['bookId'] = rating_df['bookId'].astype(
-        str).astype(np.int64)
-    rating_df['rating'] = rating_df['rating'].astype(
-        str).astype(np.float)
+    rating_df['userId'] = rating_df['userId'].astype(str).astype(np.int64)
+    rating_df['bookId'] = rating_df['bookId'].astype(str).astype(np.int64)
+    rating_df['rating'] = rating_df['rating'].astype(str).astype(np.float)
     print(rating_df)
     print(rating_df.dtypes)
     if request.user.is_authenticated:
