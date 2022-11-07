@@ -45,6 +45,16 @@ class Order(models.Model):
         total = sum([item.quantity for item in orderitems])
         return total
 
+    @property
+    def shipping(self):
+        shipping = False
+        orderitems = self.orderitem_set.all()
+        for i in orderitems:
+            if i.product.digital == False:
+                shipping = True
+
+            return shipping
+
 
 # Item detail of Cart
 class OrderItem(models.Model):
@@ -88,3 +98,6 @@ class Rating(models.Model):
     rating = models.CharField(max_length=70)
     review = models.CharField(max_length=250)
     rated_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} profile {self.product.product_name} rating'

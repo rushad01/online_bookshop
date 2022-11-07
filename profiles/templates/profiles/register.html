@@ -1,31 +1,30 @@
 {% extends 'profiles/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="content-section container col-md-3">
-  <form method="POST">
-    {% csrf_token %}
-    <fieldset class="form-group">
-      <legend class="border-bottom mb-4">Join Today</legend>
-      {{ form|crispy }}
-    </fieldset>
-    <div class="form-group">
-      <button class="btn btn-outline-info btn-block" type="submit">Sign Up</button>
+    <div class="content-section container col-md-4">
+        <form method="post">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                {{ form|crispy }}
+            </fieldset class="form-group justify-content-center">
+            <div class="form-group">
+                <button class="btn btn-outline-info btn-block" type="submit">Sign Up</button>
+            </div>
+        </form>
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                Already Have An Account? <a class="ml-2" href="{% url 'profiles:login' %}">Sign In</a>
+            </small>
+            <div class="container">
+                <small>
+                    <ul type="disk" class="text-muted">
+                        <li>password can’t be too similar to your other personal information.</li>
+                        <li>password must contain at least 8 characters.</li>
+                        <li>password can’t be a commonly used password.</li>
+                        <li>Your password can’t be entirely numeric.</li>
+                    </ul>
+                </small>
+            </div>
+        </div>
     </div>
-  </form>
-  <div class="border-top pt-3">
-    <small class="text-muted">
-      Already Have An Account? <a class="ml-2" href="{% url 'profiles:login' %}">Sign In</a>
-    </small>
-    <div class="container">
-      <small>
-        <ul type="disk" class="text-muted">
-          <li>password can’t be too similar to your other personal information.</li>
-          <li>password must contain at least 8 characters.</li>
-          <li>password can’t be a commonly used password.</li>
-          <li>Your password can’t be entirely numeric.</li>
-        </ul>
-      </small>
-    </div>
-  </div>
-</div>
 {% endblock content %}

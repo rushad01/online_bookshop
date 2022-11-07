@@ -12,10 +12,6 @@ from math import sqrt, ceil
 import json
 
 
-def index(request):
-    return render(request, 'profiles/base.html')
-
-
 def RegistrationFormView(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -28,14 +24,31 @@ def RegistrationFormView(request):
     else:
         form = UserRegistrationForm()
 
-    return render(request, 'profiles/register.html', {'form': form})
+    order = {'get_cart_total': 0, 'get_cart_items': 0}
+    cartItems = order['get_cart_items']
+    return render(request, 'profiles/register.html', {'form': form, 'cartItems': cartItems})
+
+
+# searching product
+def searchProduct(request):
+    if request.method == 'GET':
+        search = request.GET.get('search')
+        if search:
+            product = Product.objects.filter(product_name__icontains=search)
+            data = {'product': product}
+            return render(request, 'profiles/search.html', data)
+        else:
+            data = {'product': 0}
+            return render(request, 'profiles/search.html', data)
 
 # data for single product/book
 
 
-def productDetail(request, book_name):
-    book = Product.objects.filter(product_name=book_name)
-    data = {'book': book}
+def productDetail(request, book_id):
+    book = Product.objects.get(id=book_id)
+    ratings = Rating.objects.filter(product=book)
+    data = {'book': book, 'ratings': ratings}
+    print(ratings)
     return render(request, 'profiles/product.html', data)
 
 
@@ -49,7 +62,6 @@ def updateItem(request):
 
     customer = request.user.profile
     product = Product.objects.get(id=productId)
-    print(product)
 
     # tuple unpacking
     order, created = Order.objects.get_or_create(
@@ -57,7 +69,7 @@ def updateItem(request):
     orderItem, created = OrderItem.objects.get_or_create(
         order=order, product=product)
 
-    if action == 'add':
+    if action == 'add' and orderItem.quantity < product.quantity:
         orderItem.quantity = (orderItem.quantity + 1)
     elif action == 'remove':
         orderItem.quantity = (orderItem.quantity - 1)
@@ -72,7 +84,18 @@ def updateItem(request):
 
 @login_required
 def ProfileView(request):
-    return render(request, 'profiles/profile.html')
+    if request.user.is_authenticated:
+        customer = request.user.profile
+        # tuple unpacking
+        order, created = Order.objects.get_or_create(
+            profile=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+    return render(request, 'profiles/profile.html', {'cartItems': cartItems})
 
 
 # Data for Carts
@@ -83,11 +106,13 @@ def cart(request):
         order, created = Order.objects.get_or_create(
             profile=customer, completed=False)
         items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
     else:
         items = []
         order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
 
-    data = {'items': items, 'order': order}
+    data = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'profiles/cart.html', data)
 
 # Data for checkout
@@ -100,11 +125,13 @@ def checkout(request):
         order, created = Order.objects.get_or_create(
             profile=customer, completed=False)
         items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+        cartItems = order['get_cart_items']
 
-    data = {'items': items, 'order': order}
+    data = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'profiles/checkout.html', data)
 
 
@@ -178,8 +205,6 @@ def recommendationGenerator(request):
 
             # Groupby creates several sub dataframes where they all have the same value in the column specified as the parameter
             userSubsetGroup = userSubset.groupby(['userId'])
-
-            # print(userSubsetGroup.get_group(7))
 
             # Sorting it so users with book most in common with the input will have priority
             userSubsetGroup = sorted(
@@ -266,7 +291,18 @@ def recommendationGenerator(request):
 
 
 def returnRecommendation(request):
+    if request.user.is_authenticated:
+        customer = request.user.profile
+        # tuple unpacking
+        order, created = Order.objects.get_or_create(
+            profile=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     recommendation = recommendationGenerator(request)
-    print(recommendation)
-    data = {'recommendation': recommendation}
+    data = {'recommendation': recommendation, 'cartItems': cartItems}
     return render(request, 'profiles/recommendation.html', data)

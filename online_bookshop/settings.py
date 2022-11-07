@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "crispy_forms",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -138,4 +139,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # Redirecting after login
-LOGIN_REDIRECT_URL = '/profiles/profile'
+LOGIN_REDIRECT_URL = 'home'

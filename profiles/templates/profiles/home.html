@@ -1,10 +1,18 @@
 {% extends "profiles/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="container row">
-        {% for book in books %}
-            <div class="card-deck col-md-4">
-                <div class="card box-element">
+    <div class="row">
+        <div class="container">
+            <form method="get">
+                {{ books_filter.form|crispy }}
+                <button type="submit" class="btn btn-secondary">Filter</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        {% for book in books_filter.qs %}
+            <div class="col-md-4 col-lg-4 col-sm-6">
+                <div class="container box-element">
                     <img src="{{ book.product_pic.url }}"
                          class="card-img-top"
                          style="width: 100%;
@@ -23,7 +31,7 @@
                                     class="btn btn-outline-secondary add-btn update-cart">
                                 Add to Cart
                             </button>
-                            <a href="{% url 'profiles:product-detail' book.product_name %}"
+                            <a href="{% url 'profiles:product-detail' book.id %}"
                                class="btn btn-outline-success padding">View</a>
                         </div>
                     </div>

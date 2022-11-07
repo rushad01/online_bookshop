@@ -1,24 +1,30 @@
 {% extends "profiles/base.html" %}
 {% block content %}
-    {% for single in book %}
-        <div class="container">
-            <div class="card box-element">
-                <img src="{{ single.product_pic.url }}"
-                     class="card-img-top"
-                     style="width: 100%; height: 40vh"/>
-                <div class="card-body">
-                    <h5 class="card-title">{{ single.product_name }}</h5>
-                    <h5>
-                        <strong>&#2547;{{ single.price }}</strong>
-                    </h5>
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                    <button data-product="{{ single.id }}"
-                            data-action="add"
-                            class="btn btn-outline-secondary add-btn update-cart">
-                        Add to Cart
-                    </button>
-                </div>
-            </div>
+    <div class="container">
+        <div class="col-lg box-element">
+            <img src="{{ book.product_pic.url }}"
+                 class="card-img-top"
+                 style="width: 100%;
+                        height: 300px;"/>
+            <h5 class="card-title">{{ book.product_name }}</h5>
+            <h5>
+                <strong>&#2547;{{ book.price }}</strong>
+            </h5>
+            <button data-product="{{ book.id }}"
+                    data-action="add"
+                    class="btn btn-outline-secondary add-btn update-cart">
+                Add to Cart
+            </button>
         </div>
-    {% endfor %}
+    </div>
+    <div class="row">
+        <div class="container box-element">
+            {% for rating in ratings %}
+                <h6 class="card-title">{{ rating.user }}</h6>
+                <p>{{ rating.rating }}</p>
+                <p>{{ rating.review }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock content %}
