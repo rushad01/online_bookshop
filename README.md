@@ -10,4 +10,5 @@ matplotlib=3.6.0
 pandas=1.5.0
 pillow=9.2.0
 django-crispy-forms=1.14.0
+django_filters=22.1
 ```
