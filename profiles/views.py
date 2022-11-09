@@ -58,9 +58,22 @@ def searchProduct(request):
 
 
 def productDetail(request, book_id):
+    if request.user.is_authenticated:
+        customer = request.user.profile
+        # tuple unpacking
+        order, created = Order.objects.get_or_create(
+            profile=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+        cartItems = order['get_cart_items']
+
     book = Product.objects.get(id=book_id)
     ratings = Rating.objects.filter(product=book)
-    data = {'book': book, 'ratings': ratings}
+    data = {'book': book, 'ratings': ratings,
+            'order': order, 'cartItems': cartItems}
     print(ratings)
     return render(request, 'profiles/product.html', data)
 
@@ -404,4 +417,18 @@ def processOrder(request):
 
 
 def processReview(request):
+    data = json.loads(request.body)
+    bookId = data['bookDetail']['id']
+    bookName = data['bookDetail']['name']
+    book = Product.objects.get(id=bookId)
+    if request.user.is_authenticated:
+        customer = request.user
+        review_title = data['formReviewData']['title']
+        review_score = data['formReviewData']['review_score']
+        review_text = data['formReviewData']['review_text']
+        rating, updated = Rating.objects.update_or_create(
+            user=customer, product=book, title=review_title, rating=review_score, review=review_text)
+    else:
+        print("User not logged in..")
+    print(data)
     return JsonResponse("Reviewed Successfully.", safe=False)

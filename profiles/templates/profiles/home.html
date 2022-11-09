@@ -1,12 +1,15 @@
 {% extends "profiles/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="col-md-4 col-lg-4 col-sm-6 row">
-        <div class="container">
-            <form method="get">
-                {{ books_filter.form|crispy }}
-                <button type="submit" class="btn btn-secondary">Filter</button>
-            </form>
+    <div class="col-md-4 col-lg-12 col-sm-6">
+        <button data-toggle="collapse" data-target="#demo" class="btn btn-block">Filters</button>
+        <div id="demo" class="collapse">
+            <div class="container">
+                <form method="get">
+                    {{ books_filter.form|crispy }}
+                    <button type="submit" class="btn btn-secondary">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
     <div class="row">

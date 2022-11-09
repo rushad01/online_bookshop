@@ -3,6 +3,9 @@
 {% block content %}
     <div class="content-section container col-md-4 box-element">
         <form method="post">
+            <legend class="border-bottom mb-4 text-center">
+                Register
+            </legend>
             {% csrf_token %}
             <fieldset class="form-group">
                 {{ form|crispy }}

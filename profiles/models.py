@@ -95,6 +95,7 @@ class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, default=None)
+    title = models.CharField(max_length=100, default='Untitled')
     rating = models.CharField(max_length=70)
     review = models.CharField(max_length=250)
     rated_date = models.DateTimeField(auto_now_add=True)
