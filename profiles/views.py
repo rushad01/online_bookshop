@@ -1,7 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm
+from django.urls import reverse
+from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdate, ChangePassword
 from django.contrib import messages
 from shop.models import Product
 from .models import Rating, Order, Product, OrderItem, ShippingAddress
@@ -10,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt, ceil
 import json
+import datetime
 
 
 def RegistrationFormView(request):
@@ -31,14 +33,25 @@ def RegistrationFormView(request):
 
 # searching product
 def searchProduct(request):
-    if request.method == 'GET':
-        search = request.GET.get('search')
+    if request.user.is_authenticated:
+        customer = request.user.profile
+        # tuple unpacking
+        order, created = Order.objects.get_or_create(
+            profile=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+    if request.method == 'POST':
+        search = request.POST.get('search')
         if search:
             product = Product.objects.filter(product_name__icontains=search)
-            data = {'product': product}
+            data = {'product': product, 'cartItems': cartItems}
             return render(request, 'profiles/search.html', data)
         else:
-            data = {'product': 0}
+            data = {'product': None, 'cartItems': cartItems}
             return render(request, 'profiles/search.html', data)
 
 # data for single product/book
@@ -82,6 +95,36 @@ def updateItem(request):
     return JsonResponse("Item was added", safe=False)
 
 
+# Editing User profile
+@login_required
+def ProfileEdit(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdate(request.POST, request.FILES,
+                               instance=request.user.profile)
+
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            return redirect('profiles:profile')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdate(instance=request.user.profile)
+
+    if request.user.is_authenticated:
+        customer = request.user.profile
+        # tuple unpacking
+        order, created = Order.objects.get_or_create(
+            profile=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+    return render(request, 'profiles/edit_profile.html', {'cartItems': cartItems, 'u_form': u_form, 'p_form': p_form})
+
+
 @login_required
 def ProfileView(request):
     if request.user.is_authenticated:
@@ -98,7 +141,32 @@ def ProfileView(request):
     return render(request, 'profiles/profile.html', {'cartItems': cartItems})
 
 
+# Password Change
+@login_required
+def passwordChange(request):
+    if request.method == 'POST':
+        password_form = ChangePassword(request.user, request.POST)
+        if password_form.is_valid():
+            password_form.save()
+            return redirect(request.POST.get('next', reverse('profiles:profile')))
+    else:
+        password_form = ChangePassword(request.user)
+    if request.user.is_authenticated:
+        customer = request.user.profile
+        # tuple unpacking
+        order, created = Order.objects.get_or_create(
+            profile=customer, completed=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+    return render(request, 'profiles/change_password.html', {'cartItems': cartItems, 'password_form': password_form})
+
 # Data for Carts
+
+
 def cart(request):
     if request.user.is_authenticated:
         customer = request.user.profile
@@ -306,3 +374,34 @@ def returnRecommendation(request):
     recommendation = recommendationGenerator(request)
     data = {'recommendation': recommendation, 'cartItems': cartItems}
     return render(request, 'profiles/recommendation.html', data)
+
+#Transaction and shipment
+
+
+def processOrder(request):
+    data = json.loads(request.body)
+    transaction_id = datetime.datetime.now().timestamp()
+    if request.user.is_authenticated:
+        customer = request.user.profile
+        order, created = Order.objects.get_or_create(
+            profile=customer, completed=False)
+        total = float(data['form']['total'])
+        order.transaction_id = transaction_id
+        if total == order.get_cart_total:
+            order.completed = True
+        order.save()
+        if order.shipping == True:
+            ShippingAddress.objects.create(profile=customer, order=order,
+                                           address=data['shipping']['address'],
+                                           city=data['shipping']['city'],
+                                           zipcode=data['shipping']['zipcode'],
+                                           )
+    else:
+        print("User not logged in..")
+
+    print("Data:", data)
+    return JsonResponse("Payment Successfull.", safe=False)
+
+
+def processReview(request):
+    return JsonResponse("Reviewed Successfully.", safe=False)

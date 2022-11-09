@@ -83,8 +83,14 @@
                             <a class="nav-item nav-link" href="{% url 'profiles:logout' %}">Logout</a>
                         </li>
                     {% endif %}
-                    <form class="form-inline" method="get" action="">
-                        <input class="form-control mr-sm-2" type="text" name="search" placeholder="Search">
+                    <form class="form-inline"
+                          method="post"
+                          action="{% url 'profiles:search' %}">
+                        {% csrf_token %}
+                        <input class="form-control mr-sm-2"
+                               type="text"
+                               name="search"
+                               placeholder="Search">
                         <button class="btn btn-success" type="submit">Search</button>
                     </form>
                 </ul>

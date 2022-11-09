@@ -11,9 +11,11 @@
                              src="{{ user.profile.profile_pic.url }}">
                     </div>
                     <div class="text-center mt-3">
-                        <h2 class="account-heading">Username: {{ user.username }}</h2>
-                        <p class="text-secondary">User Email: {{ user.email }}</p>
+                        <h2 class="account-heading">{{ user.first_name }} {{ user.last_name }}</h2>
+                        <h2 class="account-heading">{{ user.username }}</h2>
+                        <p class="text-secondary">{{ user.email }}</p>
                     </div>
+                    <a class="btn btn-secondary" href="{% url 'profiles:update-profile' %}">Edit Profile</a>
                 </div>
             </div>
         </div>

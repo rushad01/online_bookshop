@@ -2,26 +2,32 @@
 {% load crispy_forms_tags %}
 {% block content %}
     {% if recommendation %}
-        {% for item in recommendation %}
-            <div class="container">
-                <div class="col-lg box-element">
-                    <img src="{{ item.product_pic }}"
-                         class="card-img-top"
-                         style="width: 100%;
-                                height: 300px;"/>
-                    <h5 class="card-title">{{ item.product_name }}</h5>
-                    <h5>
-                        <strong>&#2547;{{ item.price }}</strong>
-                    </h5>
-                    <button data-product="{{ item.id }}"
-                            data-action="add"
-                            class="btn btn-outline-secondary add-btn update-cart">
-                        Add to Cart
-                    </button>
+        <div class="row">
+            {% for item in recommendation %}
+                <div class="col-md-4 col-lg-4 col-sm-6">
+                    <div class="container">
+                        <div class="col-lg box-element">
+                            <img src="{{ item.product_pic }}"
+                                 class="card-img-top"
+                                 style="width: 100%;
+                                        height: 300px;"/>
+                            <h5 class="card-title">{{ item.product_name }}</h5>
+                            <h5>
+                                <strong>&#2547;{{ item.price }}</strong>
+                            </h5>
+                            <button data-product="{{ item.bookId }}"
+                                    data-action="add"
+                                    class="btn btn-outline-secondary add-btn update-cart">
+                                Add to Cart
+                            </button>
+                            <a href="{% url 'profiles:product-detail' item.bookId %}"
+                               class="btn btn-outline-success padding">View</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
-    {% else %}
-        <h4>You have no recommendation at present</h4>
+            {% endfor %}
+        {% else %}
+            <h4>You have no recommendation at present</h4>
+        </div>
     {% endif %}
 {% endblock content %}

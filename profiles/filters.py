@@ -7,4 +7,5 @@ class ProductFilter(django_filters.FilterSet):
     class Meta:
         model = Product
         fields = {'genres': ['exact'],
-                  'digital': ['exact']}
+                  'digital': ['exact'],
+                  'product_name': ['icontains'], }
