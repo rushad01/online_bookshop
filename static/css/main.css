@@ -87,3 +87,47 @@
 .hidden {
 	display: none !important;
 }
+
+.checked {
+	color: red;
+}
+
+.fa-facebook {
+	font-size: 32px;
+	margin-left: 5px;
+	display: inline-block;
+}
+
+.fa-twitter {
+	font-size: 32px;
+	margin-left: 5px;
+	display: inline-block;
+}
+
+.fa-github {
+	font-size: 32px;
+	margin-left: 5px;
+	display: inline-block;
+}
+
+.fa-linkedin {
+	font-size: 32px;
+	margin-left: 5px;
+	display: inline-block;
+}
+
+.fa-facebook:hover{
+	color: rgba(59, 89, 152, .7);
+}
+
+.fa-twitter:hover {
+	color: rgba(0, 172, 237, .7);
+}
+
+.fa-github:hover {
+	color: rgba(172, 0, 0, .7);
+}
+
+.fa-linkedin:hover{
+	color:rgba(148, 108, 171, 0.7)
+}

@@ -1,10 +1,11 @@
 {% extends 'profiles/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="content-section container col-md-4 box-element">
-        <form method="post">
-            <legend class="border-bottom mb-4 text-center">
-                Register
+    <div class="content-section container col-md-4 box-element mt-5">
+        <form method="post" class="mt-2">
+            <legend class="border-bottom mb-4 text-center"
+                    style="background-color:#087889;">
+                User Registration
             </legend>
             {% csrf_token %}
             <fieldset class="form-group">

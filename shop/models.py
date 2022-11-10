@@ -59,6 +59,7 @@ class Product(models.Model):
         ('Young adult', 'Young adult'),
     ]
     product_name = models.CharField(blank=True, max_length=255)
+    author_name = models.CharField(blank=True, max_length=255)
     price = models.FloatField(blank=True, null=True, default=1)
     digital = models.BooleanField(default=False, null=True, blank=False)
     genres = models.CharField(

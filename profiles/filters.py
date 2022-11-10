@@ -8,4 +8,5 @@ class ProductFilter(django_filters.FilterSet):
         model = Product
         fields = {'genres': ['exact'],
                   'digital': ['exact'],
-                  'product_name': ['icontains'], }
+                  'product_name': ['icontains'],
+                  'author_name': ['icontains']}

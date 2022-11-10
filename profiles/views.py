@@ -427,7 +427,11 @@ def processReview(request):
         review_score = data['formReviewData']['review_score']
         review_text = data['formReviewData']['review_text']
         rating, updated = Rating.objects.update_or_create(
-            user=customer, product=book, title=review_title, rating=review_score, review=review_text)
+            user=customer, product=book)
+        rating.title = review_title
+        rating.rating = review_score
+        rating.review = review_text
+        rating.save()
     else:
         print("User not logged in..")
     print(data)
