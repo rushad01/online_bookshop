@@ -1,8 +1,9 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdate, ChangePassword
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse, reverse_lazy
+from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdate, ChangePasswordForm
 from django.contrib import messages
 from shop.models import Product
 from .models import Rating, Order, Product, OrderItem, ShippingAddress
@@ -155,27 +156,11 @@ def ProfileView(request):
 
 
 # Password Change
-@login_required
-def passwordChange(request):
-    if request.method == 'POST':
-        password_form = ChangePassword(request.user, request.POST)
-        if password_form.is_valid():
-            password_form.save()
-            return redirect(request.POST.get('next', reverse('profiles:profile')))
-    else:
-        password_form = ChangePassword(request.user)
-    if request.user.is_authenticated:
-        customer = request.user.profile
-        # tuple unpacking
-        order, created = Order.objects.get_or_create(
-            profile=customer, completed=False)
-        items = order.orderitem_set.all()
-        cartItems = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
-        cartItems = order['get_cart_items']
-    return render(request, 'profiles/change_password.html', {'cartItems': cartItems, 'password_form': password_form})
+class PasswordsChangeView(PasswordChangeView):
+    success_url = reverse_lazy('home')
+    form_class = ChangePasswordForm
+    template_name = 'profiles/change_password.html'
+
 
 # Data for Carts
 

@@ -33,7 +33,7 @@ class ProfileUpdate(forms.ModelForm):
         fields = ['profile_pic']
 
 
-class ChangePassword(PasswordChangeForm):
+class ChangePasswordForm(PasswordChangeForm):
     old_password = forms.CharField(
         label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     new_password1 = forms.CharField(
