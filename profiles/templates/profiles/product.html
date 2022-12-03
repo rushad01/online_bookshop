@@ -27,9 +27,9 @@
         </div>
         <br>
         <hr>
-        <div class="container">
-            <div class="box-element">
-                {% if user.is_authenticated %}
+        {% if user.is_authenticated %}
+            <div class="container">
+                <div class="box-element">
                     <div class="container">
                         <form id="review-form">
                             <div class="row">
@@ -74,30 +74,33 @@
                 {% endif %}
             </div>
         </div>
-        <div class="container">
-            <div class="box-element">
-                {% for rating in ratings %}
-                    <div>
-                        <legend class="container" style="display:block;">
-                            <img class="rounded-circle"
-                                 style="width:25px; float:left; margin-top:12px; margin-top:5px; "
-                                 src="{{ rating.user.profile.profile_pic.url }}">
-                            <p >{{ rating.user }}</p>
-                        </legend>
-                    </div>
-                    <h6 class="card-title">{{ rating.title }}</h6>
-                    <p>Review Date: {{ rating.rated_date }}</p>
-                    <div class="container">
-                        {% for i in rating.rating %}
-                            <p style="display:inline-block">{{i }}</p>
-                            <i class="fa fa-star  checked"></i>
-                        {% endfor %}
-                    </div>
-                    <p>{{ rating.review }}</p>
-                    <hr>
-                {% endfor %}
+        {% if ratings %}
+            <div class="container">
+                <div class="box-element">
+                    {% for rating in ratings %}
+                        <div>
+                            <legend class="container" style="display:block;">
+                                <img class="rounded-circle"
+                                     style="width:25px; float:left; margin-top:12px; margin-top:5px; "
+                                     src="{{ rating.user.profile.profile_pic.url }}">
+                                <p >{{ rating.user }}</p>
+                            </legend>
+                        </div>
+                        <h6 class="card-title">{{ rating.title }}</h6>
+                        <p>Review Date: {{ rating.rated_date }}</p>
+                        <div class="container">
+                            {% for i in rating.rating %}
+                                <p style="display:inline-block">{{i }}</p>
+                                <i class="fa fa-star  checked"></i>
+                            {% endfor %}
+                        </div>
+                        <p>{{ rating.review }}</p>
+                        <hr>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+        {% else %}
+        {% endif %}
         <script>
             var bookId = "{{book.id}}";
             var bookName ="{{book.product_name}}";
