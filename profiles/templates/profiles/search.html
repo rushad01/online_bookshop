@@ -1,33 +1,39 @@
 {% extends 'profiles/base.html' %}
 {% block content %}
-    <div class="row">
-        {% for book in product %}
-            <div class="col-md-4 col-lg-4 col-sm-6">
-                <div class="container box-element">
-                    <img src="{{ book.product_pic.url }}"
-                         class="card-img-top"
-                         style="width: 100%;
-                                height: 180px;"/>
-                    <div class="card-body">
-                        <h6 class="card-title">{{ book.product_name }}</h6>
-                        <p>{{ book.genres }}</p>
-                        <h6 style="display: inline-block; float: left">
-                            <strong>&#2547;{{ book.price }}</strong>
-                        </h6>
-                        <br>
-                        <hr>
-                        <div class="container padding justify-content-md-center">
-                            <button data-product="{{ book.id }}"
-                                    data-action="add"
-                                    class="btn btn-outline-secondary add-btn update-cart">
-                                Add to Cart
-                            </button>
-                            <a href="{% url 'profiles:product-detail' book.id %}"
-                               class="btn btn-outline-success padding">View</a>
+    {% if product %}
+        <div class="row">
+            {% for book in product %}
+                <div class="col-md-4 col-lg-4 col-sm-6">
+                    <div class="container box-element">
+                        <img src="{{ book.product_pic.url }}"
+                             class="card-img-top"
+                             style="width: 100%;
+                                    height: 180px;"/>
+                        <div class="card-body">
+                            <h6 class="card-title">{{ book.product_name }}</h6>
+                            <p>{{ book.genres }}</p>
+                            <h6 style="display: inline-block; float: left">
+                                <strong>&#2547;{{ book.price }}</strong>
+                            </h6>
+                            <br>
+                            <hr>
+                            <div class="container padding justify-content-md-center">
+                                <button data-product="{{ book.id }}"
+                                        data-action="add"
+                                        class="btn btn-outline-secondary add-btn update-cart">
+                                    Add to Cart
+                                </button>
+                                <a href="{% url 'profiles:product-detail' book.id %}"
+                                   class="btn btn-outline-success padding">View</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="container box-element">
+            <p>No product found</p>
+        </div>
+    {% endif %}
 {% endblock content %}

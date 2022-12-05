@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,7 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    "jazzmin",
     "profiles.apps.ProfilesConfig",
     "shop.apps.ShopConfig",
     "django.contrib.admin",
@@ -141,3 +142,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Redirecting after login
 LOGIN_REDIRECT_URL = 'home'
+
+# Jazzmin Admin Panel Customization
+JAZZMIN_SETTINGS = {
+    "site_title": "MBSTU Online Bookshop",
+    "site_brand": "MBSTU Online Bookshop",
+    "welcome_sign": "Welcome to the MBSTU Online Bookshop",
+    "copyright": "Mawlana Bhashani Science and Technology University",
+    "related_modal_active": False,
+}

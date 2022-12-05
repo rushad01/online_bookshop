@@ -1,103 +1,105 @@
 {% extends "profiles/base.html" %}
 {% block content %}
-    <div class="container row">
-        <div class="col-lg box-element">
-            <div class="row">
-                <div class="col-md-6">
-                    <img src="{{ book.product_pic.url }}"
-                         class="card-img-top"
-                         style="width: 100%;
-                                height: 300px;"/>
-                </div>
-                <div class="col-md-6">
-                    <h5 class="card-title">{{ book.product_name }}</h5>
-                    <h6>{{ book.genres }}</h6>
-                    <p>by   {{ book.author_name }}</p>
-                    <p>In Stock: {{ book.quantity }}</p>
-                    <h5>
-                        <strong>&#2547;{{ book.price }}</strong>
-                    </h5>
-                    <button data-product="{{ book.id }}"
-                            data-action="add"
-                            class="btn btn-outline-secondary add-btn update-cart">
-                        Add to Cart
-                    </button>
-                </div>
+    <div class="container box-element">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ book.product_pic.url }}"
+                     class="card-img-top"
+                     style="width: 100%;
+                            height: 300px;"/>
+            </div>
+            <div class="col-md-6">
+                <h5 class="card-title">{{ book.product_name }}</h5>
+                <h6>{{ book.genres }}</h6>
+                <p>by   {{ book.author_name }}</p>
+                <p>In Stock: {{ book.quantity }}</p>
+                <h5>
+                    <strong>&#2547;{{ book.price }}</strong>
+                </h5>
+                <button data-product="{{ book.id }}"
+                        data-action="add"
+                        class="btn btn-outline-secondary add-btn update-cart">
+                    Add to Cart
+                </button>
             </div>
         </div>
-        <br>
-        <hr>
-        {% if user.is_authenticated %}
-            <div class="container">
-                <div class="box-element">
-                    <div class="container">
-                        <form id="review-form">
-                            <div class="row">
-                                <div class="form-group form-row">
-                                    <label>Review Title</label>
-                                    <input type="text"
-                                           class="form-control ml-2"
-                                           name="review_title"
-                                           placeholder="Review Title">
-                                </div>
-                                <div class="form-group">
-                                    <label>Review Score</label>
-                                    <select class="form-control ml-2" name="review_score">
-                                        <option>
-                                            1
-                                        </option>
-                                        <option>
-                                            2
-                                        </option>
-                                        <option>
-                                            3
-                                        </option>
-                                        <option>
-                                            4
-                                        </option>
-                                        <option>
-                                            5
-                                        </option>
-                                    </select>
-                                </div>
+    </div>
+    <br>
+    <br>
+    {% if user.is_authenticated %}
+        <div class="container">
+            <div class="box-element">
+                <div class="container">
+                    <form id="review-form">
+                        <div class="row">
+                            <div class="form-group form-row">
+                                <label>Review Title</label>
+                                <input type="text"
+                                       class="form-control ml-2"
+                                       name="review_title"
+                                       placeholder="Review Title">
                             </div>
                             <div class="form-group">
-                                <label>Review</label>
-                                <textarea class="form-control mt-0"
-                                          name="review_text"
-                                          rows="3"
-                                          placeholder="Review description"></textarea>
+                                <label>Review Score</label>
+                                <select class="form-control ml-2" name="review_score">
+                                    <option>
+                                        1
+                                    </option>
+                                    <option>
+                                        2
+                                    </option>
+                                    <option>
+                                        3
+                                    </option>
+                                    <option>
+                                        4
+                                    </option>
+                                    <option>
+                                        5
+                                    </option>
+                                </select>
                             </div>
-                            <button type="submit" class="btn btn-secondary mb-2">Submit</button>
-                        </form>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-        {% if ratings %}
-            <div class="container">
-                <div class="box-element">
-                    {% for rating in ratings %}
-                        <div>
-                            <legend class="container" style="display:block;">
-                                <img class="rounded-circle"
-                                     style="width:25px; float:left; margin-top:12px; margin-top:5px; "
-                                     src="{{ rating.user.profile.profile_pic.url }}">
-                                <p >{{ rating.user }}</p>
-                            </legend>
                         </div>
-                        <h6 class="card-title">{{ rating.title }}</h6>
-                        <p>Review Date: {{ rating.rated_date }}</p>
-                        <div class="container">
-                            {% for i in rating.rating %}
-                                <p style="display:inline-block">{{i }}</p>
-                                <i class="fa fa-star  checked"></i>
-                            {% endfor %}
+                        <div class="form-group">
+                            <label>Review</label>
+                            <textarea class="form-control mt-0"
+                                      name="review_text"
+                                      rows="3"
+                                      placeholder="Review description"></textarea>
                         </div>
-                        <p>{{ rating.review }}</p>
-                        <hr>
-                    {% endfor %}
+                        <button type="submit" class="btn btn-secondary mb-2">Submit</button>
+                    </form>
                 </div>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <br>
+    {% if ratings %}
+        <div class="container">
+            <div class="box-element">
+                {% for rating in ratings %}
+                    <div>
+                        <legend class="container" style="display:block;">
+                            <img class="rounded-circle"
+                                 style="width:25px; float:left; margin-top:12px; margin-top:5px; "
+                                 src="{{ rating.user.profile.profile_pic.url }}">
+                            <p >{{ rating.user }}</p>
+                        </legend>
+                    </div>
+                    <h6>{{ rating.title }}</h6>
+                    <p>
+                        <strong>Review Date</strong>: {{ rating.rated_date }}
+                    </p>
+                    <div class="container">
+                        {% for i in rating.rating %}
+                            <p style="display:inline-block">{{i }}</p>
+                            <i class="fa fa-star  checked"></i>
+                        {% endfor %}
+                    </div>
+                    <p>{{ rating.review }}</p>
+                    <hr>
+                {% endfor %}
             </div>
         {% else %}
         {% endif %}

@@ -12,14 +12,13 @@ from shop.models import Product
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=255, blank=True)
-    last_name = models.CharField(max_length=255, blank=True)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, blank=True, null=True)
     city = models.CharField(max_length=200, blank=True)
     profile_pic = models.ImageField(default='default.png', upload_to='profile')
 
     def __str__(self):
-        return f'{self.user.username} Profile.'
+        return f'{self.user.username} Profile'
 
 
 # model for cart
@@ -31,7 +30,7 @@ class Order(models.Model):
     transaction_id = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return str(self.profile.user.username)
+        return f'{self.profile} Order no {self.id}'
 
     @ property
     def get_cart_total(self):
