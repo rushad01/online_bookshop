@@ -202,17 +202,17 @@ def checkout(request):
 
 
 def recommendationGenerator(request):
-    # fetching books and rating from database
+    
     books = Product.objects.all()
     ratings = Rating.objects.all()
-    # data storage for calculation
+    
     x = []
     y = []
     A = []
     B = []
     C = []
     D = []
-    # Books dataframe
+    
     for item in books:
         x = [item.id, item.product_name, item.product_pic.url,
              item.genres, item.digital, item.quantity, item.price]
@@ -223,7 +223,7 @@ def recommendationGenerator(request):
     print(books_df)
     print(books_df.dtypes)
 
-    # Rating dataframe
+    
     for item in ratings:
         A = [item.user.id, item.product.id, item.rating]
         B += [A]
@@ -236,7 +236,7 @@ def recommendationGenerator(request):
     print(rating_df.dtypes)
     if request.user.is_authenticated:
         userid = request.user.id
-        # select related is join statement in django.It looks for foreign key and join the table
+        
         userInput = Rating.objects.select_related(
             'product').filter(user=userid)
         print(userInput)
@@ -253,26 +253,24 @@ def recommendationGenerator(request):
                 str).astype(np.float)
             print(inputBooks.dtypes)
 
-            # filtering out books by title/product_name
+            
             inputId = books_df[books_df['product_name'].isin(
                 inputBooks['product_name'].tolist())]
-            # Then merging it so we can get the bookId. It's implicitly merging it by title/product_name.
+            
 
             inputBooks = pd.merge(inputId, inputBooks)
-            # Final input dataframe
-            # If a book you added in above isn't here, then it might not be in the original
-            # dataframe or it might spelled differently, please check capitalisation.
+            
             print(inputBooks)
 
-            # Filtering out users that have watched books that the input has watched and storing it
+           
             userSubset = rating_df[rating_df['bookId'].isin(
                 inputBooks['bookId'].tolist())]
             print(userSubset.head())
 
-            # Groupby creates several sub dataframes where they all have the same value in the column specified as the parameter
+            
             userSubsetGroup = userSubset.groupby(['userId'])
 
-            # Sorting it so users with book most in common with the input will have priority
+            
             userSubsetGroup = sorted(
                 userSubsetGroup,  key=lambda x: len(x[1]), reverse=True)
 
@@ -280,24 +278,24 @@ def recommendationGenerator(request):
 
             userSubsetGroup = userSubsetGroup[0:]
 
-            # Store the Pearson Correlation in a dictionary, where the key is the user Id and the value is the coefficient
+            
             pearsonCorrelationDict = {}
 
-        # For every user group in our subset
+        
             for name, group in userSubsetGroup:
-                # Start by sorting the input and current user group so the values aren't mixed up later on
+                
                 group = group.sort_values(by='bookId')
                 inputBooks = inputBooks.sort_values(by='bookId')
-                # Get the N for the formula
+                
                 nRatings = len(group)
-                # Get the review scores for the books that they both have in common
+                
                 temp_df = inputBooks[inputBooks['bookId'].isin(
                     group['bookId'].tolist())]
-                # And then store them in a temporary buffer variable in a list format to facilitate future calculations
+                
                 tempRatingList = temp_df['rating'].tolist()
-                # Put the current user group reviews in a list format
+                
                 tempGroupList = group['rating'].tolist()
-                # Calculate the pearson correlation between two users, so called, x and y
+                
                 Sxx = sum([i**2 for i in tempRatingList]) - \
                     pow(sum(tempRatingList), 2)/float(nRatings)
                 Syy = sum([i**2 for i in tempGroupList]) - \
@@ -305,7 +303,7 @@ def recommendationGenerator(request):
                 Sxy = sum(i*j for i, j in zip(tempRatingList, tempGroupList)) - \
                     sum(tempRatingList)*sum(tempGroupList)/float(nRatings)
 
-                # If the denominator is different than zero, then divide, else, 0 correlation.
+                
                 if Sxx != 0 and Syy != 0:
                     pearsonCorrelationDict[name] = Sxy/sqrt(Sxx*Syy)
                 else:
@@ -328,21 +326,21 @@ def recommendationGenerator(request):
                 rating_df, left_on='userId', right_on='userId', how='inner')
             topUsersRating.head()
 
-            # Multiplies the similarity by the user's ratings
+            
             topUsersRating['weightedRating'] = topUsersRating['similarityIndex'] * \
                 topUsersRating['rating']
             topUsersRating.head()
 
-            # Applies a sum to the topUsers after grouping it up by userId
+            
             tempTopUsersRating = topUsersRating.groupby(
                 'bookId').sum()[['similarityIndex', 'weightedRating']]
             tempTopUsersRating.columns = [
                 'sum_similarityIndex', 'sum_weightedRating']
             tempTopUsersRating.head()
 
-            # Creates an empty dataframe
+            
             recommendation_df = pd.DataFrame()
-            # Take the weighted average
+            
             recommendation_df['weighted average recommendation score'] = tempTopUsersRating['sum_weightedRating'] / \
                 tempTopUsersRating['sum_similarityIndex']
             recommendation_df['bookId'] = tempTopUsersRating.index

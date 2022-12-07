@@ -147,6 +147,7 @@ LOGIN_REDIRECT_URL = 'home'
 JAZZMIN_SETTINGS = {
     "site_title": "MBSTU Online Bookshop",
     "site_brand": "MBSTU Online Bookshop",
+    "site_header": "MBSTU Online Bookshop",
     "welcome_sign": "Welcome to the MBSTU Online Bookshop",
     "copyright": "Mawlana Bhashani Science and Technology University",
     "related_modal_active": False,
