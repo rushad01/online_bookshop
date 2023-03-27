@@ -17,10 +17,5 @@ django_filters=22.1
 
 <img src="./Demo/Home Page.PNG" style="width: 100%"  />
 <img src="./Demo/Home Page Detail.PNG" style="width: 100%"  />
-<<<<<<< HEAD
 <img src="./Demo/Recommendation System 1.JPG" style="width: 100%"  />
 <img src="./Demo/Cart.JPG" style="width: 100%"  />
-=======
-<img src="./Demo/Recommendation System 1.PNG" style="width: 100%"  />
-<img src="./Demo/Cart.PNG" style="width: 100%"  />
->>>>>>> 66b5d5225a82eb517a3be4a06143125ca5aa31ba
