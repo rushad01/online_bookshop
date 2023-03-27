@@ -1,4 +1,4 @@
-## MBSTU Online Bookshop
+## Online Bookshop
 
 **Online bookshop using mechine learning**
 
