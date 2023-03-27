@@ -12,3 +12,7 @@ pillow=9.2.0
 django-crispy-forms=1.14.0
 django_filters=22.1
 ```
+
+## Screenshots
+
+<img src="./Demo/Home Page.PNG" style="width: 100%"  />
